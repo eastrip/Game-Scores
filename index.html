@@ -290,6 +290,103 @@
   }
   .btn-remove:hover { color: var(--accent2); background: rgba(224,80,80,0.1); }
 
+  .btn-history {
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 0.75rem; padding: 1px 3px; border-radius: 3px;
+    transition: color 0.15s, background 0.15s; line-height: 1; flex-shrink: 0;
+  }
+  .btn-history:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+
+  /* HISTORY MODAL */
+  .history-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .history-overlay.open { display: flex; }
+  .history-modal {
+    background: #1a1a26;
+    border: 1.5px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 480px;
+    padding: 16px;
+    max-height: 65vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .history-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .history-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .history-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    flex: 1;
+  }
+  .history-close {
+    background: none; border: none; color: var(--text-muted);
+    font-size: 1rem; cursor: pointer; padding: 2px 6px; border-radius: 4px;
+  }
+  .history-close:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+  .history-list {
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .history-empty {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  .history-item .h-round { color: var(--text-muted); font-size: 0.65rem; }
+  .history-item .h-pts {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+  }
+  .history-item .h-total { color: var(--text-muted); font-size: 0.68rem; }
+  .history-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .history-footer strong { color: var(--text); }
+
   .card-score {
     padding: 6px 9px 4px;
     text-align: center;
@@ -334,6 +431,7 @@
     min-width: 0;
   }
   .score-input:focus { border-color: var(--text-muted); }
+  .score-input::placeholder { color: rgba(107,107,136,0.5); font-weight: 400; }
 
   .btn-score {
     width: 28px; height: 28px;
@@ -437,6 +535,22 @@
   </div>
 </div>
 
+<!-- HISTORY MODAL -->
+<div class="history-overlay" id="history-overlay" onclick="closeHistory(event)">
+  <div class="history-modal">
+    <div class="history-header">
+      <div class="history-dot" id="history-dot"></div>
+      <div class="history-title" id="history-title">Historique</div>
+      <button class="history-close" onclick="closeHistoryBtn()">✕</button>
+    </div>
+    <div class="history-list" id="history-list"></div>
+    <div class="history-footer">
+      <span>Nombre de tours : <strong id="history-rounds">0</strong></span>
+      <span>Total : <strong id="history-total">0</strong></span>
+    </div>
+  </div>
+</div>
+
 <script>
 const DEFAULTS = [
   { limit: null, highWins: true  },
@@ -448,7 +562,7 @@ const NAMES  = ['Joueur 1','Joueur 2','Joueur 3','Joueur 4'];
 const games  = [[], [], []];
 
 function initGame(tab) {
-  games[tab] = NAMES.map((n, i) => ({ name: n, color: COLORS[i], score: 0 }));
+  games[tab] = NAMES.map((n, i) => ({ name: n, color: COLORS[i], score: 0, history: [] }));
   render(tab);
 }
 
@@ -479,6 +593,7 @@ function render(tab) {
     const rank      = sorted.findIndex(s => s === p) + 1;
     const pct       = Math.min(100, limit > 0 ? (Math.abs(p.score) / limit) * 100 : 0);
     const rankLabel = ['🥇','🥈','🥉'][rank - 1] || ('#' + rank);
+    const hasHistory = p.history && p.history.length > 0;
 
     const card = document.createElement('div');
     card.className = 'player-card' + (isLeader ? ' leader' : '');
@@ -491,6 +606,7 @@ function render(tab) {
           '<input type="color" value="' + p.color + '" oninput="changeColor(' + tab + ',' + idx + ',this.value)">' +
         '</div>' +
         '<input class="player-name-input" value="' + p.name + '" oninput="changeName(' + tab + ',' + idx + ',this.value)" placeholder="Joueur ' + (idx+1) + '">' +
+        '<button class="btn-history" onclick="openHistory(' + tab + ',' + idx + ')" title="Historique">' + (hasHistory ? '🕐' : '🕐') + '</button>' +
         '<button class="btn-remove" onclick="removePlayer(' + tab + ',' + idx + ')">✕</button>' +
       '</div>' +
       '<div class="card-score">' +
@@ -499,7 +615,7 @@ function render(tab) {
       '</div>' +
       '<div class="card-controls">' +
         '<button class="btn-score btn-minus" onclick="adjustScore(' + tab + ',' + idx + ',-1)">−</button>' +
-        '<input class="score-input" id="input-' + tab + '-' + idx + '" type="number" value="1" min="1">' +
+        '<input class="score-input" id="input-' + tab + '-' + idx + '" type="number" value="" min="1" placeholder="pts">' +
         '<button class="btn-score btn-plus" onclick="adjustScore(' + tab + ',' + idx + ',1)">+</button>' +
       '</div>';
     grid.appendChild(card);
@@ -509,10 +625,57 @@ function render(tab) {
 function adjustScore(tab, idx, sign) {
   const inputEl = document.getElementById('input-' + tab + '-' + idx);
   const pts = Math.abs(parseInt(inputEl.value) || 0);
+  if (pts === 0) return;
   games[tab][idx].score += sign * pts;
+  games[tab][idx].history = games[tab][idx].history || [];
+  games[tab][idx].history.push({ pts: sign * pts, total: games[tab][idx].score });
   const disp = document.getElementById('score-disp-' + tab + '-' + idx);
   if (disp) { disp.classList.remove('bump'); void disp.offsetWidth; disp.classList.add('bump'); }
   render(tab);
+}
+
+function openHistory(tab, idx) {
+  const p = games[tab][idx];
+  const overlay = document.getElementById('history-overlay');
+  const list    = document.getElementById('history-list');
+  const dot     = document.getElementById('history-dot');
+  const title   = document.getElementById('history-title');
+  const rounds  = document.getElementById('history-rounds');
+  const total   = document.getElementById('history-total');
+
+  dot.style.background = p.color;
+  title.textContent = p.name || ('Joueur ' + (idx + 1));
+  title.style.color = p.color;
+  rounds.textContent = p.history.length;
+  total.textContent  = p.score;
+
+  list.innerHTML = '';
+  if (!p.history.length) {
+    list.innerHTML = '<div class="history-empty">Aucun point enregistré</div>';
+  } else {
+    [...p.history].reverse().forEach((h, i) => {
+      const round = p.history.length - i;
+      const sign  = h.pts >= 0 ? '+' : '';
+      const color = h.pts >= 0 ? '#50c878' : '#e05050';
+      const item  = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML =
+        '<span class="h-round">Tour ' + round + '</span>' +
+        '<span class="h-pts" style="color:' + color + '">' + sign + h.pts + ' pts</span>' +
+        '<span class="h-total">Total : ' + h.total + '</span>';
+      list.appendChild(item);
+    });
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeHistoryBtn() {
+  document.getElementById('history-overlay').classList.remove('open');
+}
+
+function closeHistory(e) {
+  if (e.target === document.getElementById('history-overlay')) closeHistoryBtn();
 }
 
 function changeColor(tab, idx, color) {
@@ -526,7 +689,7 @@ function changeName(tab, idx, name) {
 
 function addPlayer(tab) {
   const used = games[tab].length;
-  games[tab].push({ name: 'Joueur ' + (used + 1), color: COLORS[used % COLORS.length], score: 0 });
+  games[tab].push({ name: 'Joueur ' + (used + 1), color: COLORS[used % COLORS.length], score: 0, history: [] });
   render(tab);
 }
 
@@ -544,7 +707,7 @@ function resetScores(tab) {
 function confirmReset(tab, yes) {
   const bar = document.getElementById('confirm-bar-' + tab);
   if (bar) bar.style.display = 'none';
-  if (yes) { games[tab].forEach(p => p.score = 0); render(tab); }
+  if (yes) { games[tab].forEach(p => { p.score = 0; p.history = []; }); render(tab); }
 }
 
 function update(tab) { render(tab); }
