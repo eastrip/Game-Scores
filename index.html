@@ -519,8 +519,22 @@ Object.keys(GAME_CONFIG).forEach(id => { games[id] = []; });
 
 let hexaSelectedIdx = null;
 
+// ── SAUVEGARDE ──
+function saveGame(id) {
+  try { localStorage.setItem('scoregames_' + id, JSON.stringify(games[id])); } catch(e) {}
+}
+function loadGame(id) {
+  try {
+    const saved = localStorage.getItem('scoregames_' + id);
+    if (saved) { games[id] = JSON.parse(saved); return true; }
+  } catch(e) {}
+  return false;
+}
+
 function initGame(id) {
-  games[id] = NAMES.map((n, i) => ({ name: n, color: COLORS[i], score: 0, history: [] }));
+  if (!loadGame(id)) {
+    games[id] = NAMES.map((n, i) => ({ name: n, color: COLORS[i], score: 0, history: [] }));
+  }
   renderGame(id);
 }
 Object.keys(GAME_CONFIG).forEach(initGame);
@@ -607,17 +621,19 @@ function adjustScore(id, idx, sign) {
   games[id][idx].history.push({ pts: sign * pts, total: games[id][idx].score });
   const disp = document.getElementById('score-disp-' + id + '-' + idx);
   if (disp) { disp.classList.remove('bump'); void disp.offsetWidth; disp.classList.add('bump'); }
+  saveGame(id);
   renderGame(id);
 }
 
-function changeColor(id, idx, color) { games[id][idx].color = color; renderGame(id); }
-function changeName(id, idx, name)   { games[id][idx].name = name; if (id === 'hexa') renderHexaTargets(); }
+function changeColor(id, idx, color) { games[id][idx].color = color; saveGame(id); renderGame(id); }
+function changeName(id, idx, name)   { games[id][idx].name = name; saveGame(id); if (id === 'hexa') renderHexaTargets(); }
 
 function addPlayer(id) {
   const max = GAME_CONFIG[id].maxPlayers || 99;
   if (games[id].length >= max) return;
   const used = games[id].length;
   games[id].push({ name: 'Joueur ' + (used + 1), color: COLORS[used % COLORS.length], score: 0, history: [] });
+  saveGame(id);
   renderGame(id);
 }
 
@@ -625,6 +641,7 @@ function removePlayer(id, idx) {
   if (games[id].length <= 2) return;
   if (id === 'hexa' && hexaSelectedIdx === idx) hexaSelectedIdx = null;
   games[id].splice(idx, 1);
+  saveGame(id);
   renderGame(id);
 }
 
@@ -634,6 +651,7 @@ function confirmReset(id, yes) {
   if (yes) {
     games[id].forEach(p => { p.score = 0; p.history = []; });
     if (id === 'hexa') { hexaSelectedIdx = null; document.getElementById('hexa-pts-section')?.classList.remove('ready'); }
+    saveGame(id);
     renderGame(id);
   }
 }
@@ -668,6 +686,7 @@ function hookHexaBtns() {
       games['hexa'][hexaSelectedIdx].history.push({ pts, total: games['hexa'][hexaSelectedIdx].score });
       const disp = document.getElementById('score-disp-hexa-' + hexaSelectedIdx);
       if (disp) { disp.classList.remove('bump'); void disp.offsetWidth; disp.classList.add('bump'); }
+      saveGame('hexa');
       renderGame('hexa');
     };
   });
