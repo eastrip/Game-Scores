@@ -624,8 +624,22 @@ function adjustScore(id, idx, sign) {
   const inputEl = document.getElementById('input-' + id + '-' + idx);
   const pts = Math.abs(parseInt(inputEl.value) || 0);
   if (pts === 0) return;
+
+  // Applique le joueur cliqué
   games[id][idx].score += sign * pts;
   games[id][idx].history.push({ pts: sign * pts, total: games[id][idx].score });
+
+  // Applique aussi les autres joueurs qui ont un champ renseigné
+  games[id].forEach((p, i) => {
+    if (i === idx) return;
+    const otherEl = document.getElementById('input-' + id + '-' + i);
+    if (!otherEl) return;
+    const otherPts = Math.abs(parseInt(otherEl.value) || 0);
+    if (otherPts === 0) return;
+    p.score += otherPts;
+    p.history.push({ pts: otherPts, total: p.score });
+  });
+
   const disp = document.getElementById('score-disp-' + id + '-' + idx);
   if (disp) { disp.classList.remove('bump'); void disp.offsetWidth; disp.classList.add('bump'); }
   saveGame(id);
