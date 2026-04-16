@@ -82,7 +82,7 @@
     border-radius: 14px;
     overflow: hidden;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: none;
     transition: transform 0.18s, box-shadow 0.18s;
     position: relative;
     min-height: 130px;
@@ -125,7 +125,7 @@
   .gc-custom { background: linear-gradient(135deg, #d4a800 0%, #c03080 100%); }
   .gc-flip7  { background: linear-gradient(135deg, #00c4b4 0%, #007a72 100%); }
   .gc-skyjo  { background: linear-gradient(135deg, #1ab8d4 0%, #0a8a30 100%); }
-  .gc-dekal  { background: linear-gradient(135deg, #8b1a1a 0%, #3a0808 100%); }
+  .gc-dekal  { background: linear-gradient(135deg, #1a0202 0%, #8b1a1a 100%); }
   .gc-hexa   { background: linear-gradient(135deg, #3a9e7a 0%, #e05080 100%); }
 
   /* ══ GAME SCREEN ══ */
@@ -133,14 +133,14 @@
   .game-screen.active { display: block; }
 
   .game-panel {
-    border: 1.5px solid rgba(255,255,255,0.15);
+    border: none;
     border-radius: 12px;
     padding: 10px;
   }
   .theme-custom { background: linear-gradient(180deg, #d4a800 0%, #c03080 100%); }
   .theme-flip7  { background: linear-gradient(180deg, #00a898 0%, #004a44 100%); }
   .theme-skyjo  { background: linear-gradient(180deg, #1ab8d4 0%, #0a8a30 100%); }
-  .theme-dekal  { background: linear-gradient(180deg, #7a1010 0%, #2a0505 100%); }
+  .theme-dekal  { background: linear-gradient(180deg, #2a0505 0%, #7a1010 100%); }
   .theme-hexa   { background: linear-gradient(160deg, #3a9e7a 0%, #a0c040 25%, #e8a020 60%, #e05080 100%); }
 
   /* GAME META */
@@ -172,6 +172,8 @@
   .btn-add:hover { background: rgba(0,0,0,0.3); }
   .btn-reset { background: rgba(0,0,0,0.15); border-color: #8b0000; color: #8b0000; margin-left: auto; }
   .btn-reset:hover { background: rgba(0,0,0,0.3); }
+  #screen-dekal .btn-reset { border-color: #ff4444; color: #ff4444; }
+  #screen-dekal .btn-reset:hover { background: rgba(255,60,60,0.15); }
 
   /* CONFIRM BAR */
   .confirm-bar {
@@ -185,14 +187,14 @@
 
   /* WINNER BANNER */
   .winner-banner {
-    display: none; align-items: center; gap: 8px; background: rgba(0,0,0,0.45);
+    display: none; align-items: center; gap: 12px; background: rgba(0,0,0,0.45);
     border: 1.5px solid rgba(255,255,255,0.35); border-radius: 8px;
-    padding: 6px 12px; margin-bottom: 8px; animation: slideIn 0.3s ease;
+    padding: 24px 16px; margin-bottom: 8px; animation: slideIn 0.3s ease;
   }
   .winner-banner.show { display: flex; }
-  .winner-banner .trophy { font-size: 1.1rem; }
-  .winner-banner .winner-text { font-size: 0.72rem; font-weight: 600; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
-  .winner-banner .winner-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.06em; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+  .winner-banner .trophy { font-size: 2.6rem; }
+  .winner-banner .winner-text { font-size: 0.9rem; font-weight: 600; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+  .winner-banner .winner-name { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.06em; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
   @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
   /* PLAYERS GRID */
@@ -206,7 +208,7 @@
   }
   .player-card:hover { transform: translateY(-1px); }
   .player-card.leader { border-color: currentColor; box-shadow: 0 0 14px -4px currentColor; }
-  .progress-bar { height: 2px; background: var(--border); }
+  .progress-bar { height: 4px; background: var(--border); }
   .progress-fill { height: 100%; transition: width 0.4s ease; }
   .card-top { padding: 7px 9px 6px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
   .leader-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 4px var(--accent); display: none; flex-shrink: 0; }
@@ -227,11 +229,13 @@
   .btn-history:hover { color: var(--text); background: rgba(255,255,255,0.08); }
   .btn-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; padding: 1px 2px; border-radius: 3px; transition: color 0.15s; line-height: 1; flex-shrink: 0; }
   .btn-remove:hover { color: #e05050; background: rgba(224,80,80,0.1); }
-  .card-score { padding: 6px 9px 4px; text-align: center; }
-  .score-display { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1; letter-spacing: 0.02em; }
+  .card-score { padding: 4px 9px 2px; position: relative; }
+  .score-row { display: flex; align-items: center; justify-content: center; }
+  .rank-badge { font-size: 1.3rem; line-height: 1; position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: #6b6b88; }
+  .score-display { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1; letter-spacing: 0.02em; text-align: center; }
   .score-display.bump { animation: bump 0.18s ease; }
   @keyframes bump { 0% { transform: scale(1); } 50% { transform: scale(1.14); } 100% { transform: scale(1); } }
-  .rank-badge { font-size: 0.56rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+  .leader-label { font-size: 0.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); text-align: center; }
   .card-controls { display: flex; gap: 4px; padding: 0 7px 7px; }
   .score-input {
     flex: 1; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 6px;
@@ -583,7 +587,7 @@ function renderGame(id) {
     const isLeader  = p.score === leaderScore && p.score !== 0;
     const rank      = sorted.findIndex(s => s === p) + 1;
     const pct       = Math.min(100, limit > 0 ? (Math.abs(p.score) / limit) * 100 : 0);
-    const rankLabel = ['🥇','🥈','🥉'][rank - 1] || ('#' + rank);
+    const rankLabel = ['🥇','🥈','🥉'][rank - 1] || ('<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:#6b6b88">#' + rank + '</span>');
     const card = document.createElement('div');
     card.className = 'player-card' + (isLeader ? ' leader' : '');
     card.style.color = p.color;
@@ -599,8 +603,11 @@ function renderGame(id) {
         '<button class="btn-remove" onclick="removePlayer(\'' + id + '\',' + idx + ')">✕</button>' +
       '</div>' +
       '<div class="card-score">' +
-        '<div class="score-display" id="score-disp-' + id + '-' + idx + '" style="color:' + p.color + '">' + p.score + '</div>' +
-        '<div class="rank-badge">' + rankLabel + (isLeader ? ' — EN TÊTE' : '') + '</div>' +
+        '<div class="score-row">' +
+          '<div class="rank-badge">' + rankLabel + '</div>' +
+          '<div class="score-display" id="score-disp-' + id + '-' + idx + '" style="color:' + p.color + '">' + p.score + '</div>' +
+        '</div>' +
+        (isLeader ? '<div class="leader-label">EN TÊTE</div>' : '') +
       '</div>' +
       '<div class="card-controls">' +
         '<button class="btn-score btn-minus" onclick="adjustScore(\'' + id + '\',' + idx + ',-1)">−</button>' +
