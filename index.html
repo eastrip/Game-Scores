@@ -203,7 +203,7 @@
 
   /* PLAYER CARD */
   .player-card {
-    background: var(--surface); border: 1.5px solid var(--border);
+    background: var(--surface); border: none;
     border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s, transform 0.15s;
   }
   .player-card:hover { transform: translateY(-1px); }
@@ -211,6 +211,9 @@
   .progress-bar { height: 4px; background: var(--border); }
   .progress-fill { height: 100%; transition: width 0.4s ease; }
   .card-top { padding: 7px 9px 6px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+  .player-card.leader .card-top { background: linear-gradient(135deg, #000 0%, #c9a000 100%); }
+  .player-card.rank-2 .card-top { background: linear-gradient(135deg, #000 0%, #909090 100%); }
+  .player-card.rank-3 .card-top { background: linear-gradient(135deg, #000 0%, #a0622a 100%); }
   .leader-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 4px var(--accent); display: none; flex-shrink: 0; }
   .player-card.leader .leader-dot { display: block; }
   .color-picker-wrap {
@@ -593,7 +596,7 @@ function renderGame(id) {
     const pct       = Math.min(100, limit > 0 ? (Math.abs(p.score) / limit) * 100 : 0);
     const rankLabel = ['🥇','🥈','🥉'][rank - 1] || ('<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:#6b6b88">#' + rank + '</span>');
     const card = document.createElement('div');
-    card.className = 'player-card' + (isLeader ? ' leader' : '');
+    card.className = 'player-card' + (isLeader ? ' leader' : '') + (rank === 2 && p.score !== 0 ? ' rank-2' : '') + (rank === 3 && p.score !== 0 ? ' rank-3' : '');
     card.style.color = p.color;
     card.innerHTML =
       '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;background:' + p.color + ';opacity:0.75"></div></div>' +
