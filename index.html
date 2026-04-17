@@ -325,21 +325,25 @@
         <div class="game-card-badge">🏆 + de pts gagne</div>
         <div class="game-card-title">Flip 7</div>
         <div class="game-card-sub">Limite 200 pts</div>
+        <div class="game-card-sub">3+ joueurs</div>
       </div>
       <div class="game-card gc-skyjo" onclick="openGame('skyjo')">
         <div class="game-card-badge">🎯 - de pts gagne</div>
         <div class="game-card-title">Skyjo</div>
         <div class="game-card-sub">Limite 100 pts</div>
+        <div class="game-card-sub">2-8 joueurs</div>
       </div>
       <div class="game-card gc-dekal" onclick="openGame('dekal')">
         <div class="game-card-badge">🎯 - de pts gagne</div>
         <div class="game-card-title">Dékal</div>
         <div class="game-card-sub">Limite 100 pts</div>
+        <div class="game-card-sub">2-6 joueurs</div>
       </div>
       <div class="game-card gc-hexa" onclick="openGame('hexa')">
         <div class="game-card-badge">🏆 + de pts gagne</div>
         <div class="game-card-title">Hexa</div>
-        <div class="game-card-sub">Limite 100 pts · 2-6 joueurs</div>
+        <div class="game-card-sub">Limite 100 pts</div>
+        <div class="game-card-sub">2-6 joueurs</div>
       </div>
     </div>
   </div>
@@ -508,11 +512,11 @@
 
 <script>
 const GAME_CONFIG = {
-  custom: { limit: null, highWins: true  },
-  flip7:  { limit: 200,  highWins: true  },
-  skyjo:  { limit: 100,  highWins: false },
-  dekal:  { limit: 100,  highWins: false },
-  hexa:   { limit: 100,  highWins: true, maxPlayers: 6 },
+  custom: { limit: null, highWins: true,  minPlayers: 2, maxPlayers: 99 },
+  flip7:  { limit: 200,  highWins: true,  minPlayers: 3, maxPlayers: 99 },
+  skyjo:  { limit: 100,  highWins: false, minPlayers: 2, maxPlayers: 8  },
+  dekal:  { limit: 100,  highWins: false, minPlayers: 2, maxPlayers: 6  },
+  hexa:   { limit: 100,  highWins: true,  minPlayers: 2, maxPlayers: 6  },
 };
 const GAME_NAMES = { custom:'Personnalisé', flip7:'Flip 7', skyjo:'Skyjo', dekal:'Dékal', hexa:'Hexa' };
 const COLORS = ['#f0c040','#e05050','#50b8e0','#70d4a0','#d88ae0','#f09640'];
@@ -649,7 +653,7 @@ function changeColor(id, idx, color) { games[id][idx].color = color; saveGame(id
 function changeName(id, idx, name)   { games[id][idx].name = name; saveGame(id); if (id === 'hexa') renderHexaTargets(); }
 
 function addPlayer(id) {
-  const max = GAME_CONFIG[id].maxPlayers || 99;
+  const max = GAME_CONFIG[id].maxPlayers;
   if (games[id].length >= max) return;
   const used = games[id].length;
   games[id].push({ name: 'Joueur ' + (used + 1), color: COLORS[used % COLORS.length], score: 0, history: [] });
@@ -658,7 +662,8 @@ function addPlayer(id) {
 }
 
 function removePlayer(id, idx) {
-  if (games[id].length <= 2) return;
+  const min = GAME_CONFIG[id].minPlayers;
+  if (games[id].length <= min) return;
   if (id === 'hexa' && hexaSelectedIdx === idx) hexaSelectedIdx = null;
   games[id].splice(idx, 1);
   saveGame(id);
