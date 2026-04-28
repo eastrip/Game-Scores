@@ -170,10 +170,59 @@
   }
   .btn-add   { background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.7); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
   .btn-add:hover { background: rgba(0,0,0,0.3); }
+  .btn-history-global { background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.5); color: rgba(255,255,255,0.85); text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+  .btn-history-global:hover { background: rgba(0,0,0,0.3); }
   .btn-reset { background: rgba(0,0,0,0.15); border-color: #8b0000; color: #8b0000; margin-left: auto; }
   .btn-reset:hover { background: rgba(0,0,0,0.3); }
   #screen-dekal .btn-reset { border-color: #ff4444; color: #ff4444; }
   #screen-dekal .btn-reset:hover { background: rgba(255,60,60,0.15); }
+
+  /* ── GLOBAL HISTORY MODAL ── */
+  .gh-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+    z-index: 200; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px);
+  }
+  .gh-overlay.open { display: flex; }
+  .gh-modal {
+    background: #13131e; border: 1.5px solid var(--border); border-radius: 16px 16px 0 0;
+    width: 100%; max-width: 100%; padding: 16px; max-height: 80vh;
+    display: flex; flex-direction: column; animation: slideUp 0.22s ease;
+  }
+  .gh-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .gh-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; flex: 1; color: var(--text); }
+  .gh-close { background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+  .gh-close:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+  .gh-empty { color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 24px 0; }
+  .gh-table-wrap { overflow: auto; flex: 1; }
+  .gh-table {
+    width: 100%; border-collapse: collapse; font-size: 0.72rem;
+    table-layout: fixed;
+  }
+  .gh-table th {
+    padding: 6px 2px; text-align: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap; position: sticky; top: 0; background: #13131e; z-index: 1;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .gh-table th.col-type { text-align: left; color: var(--text-muted); font-size: 0.65rem; width: 38px; }
+  .gh-table td {
+    padding: 5px 2px; text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.88rem; letter-spacing: 0.02em;
+    overflow: hidden;
+  }
+  .gh-table td.col-type {
+    text-align: left; font-family: 'DM Sans', sans-serif; font-size: 0.6rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; width: 38px;
+  }
+  .gh-table tr:last-child td { border-bottom: none; }
+  .gh-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .gh-badge-tour { color: #50c878; }
+  .gh-badge-correctif { color: #f0c040; }
+  .gh-pts-pos { color: #50c878; }
+  .gh-pts-neg { color: #e05050; }
+  .gh-pts-nil { color: var(--text-muted); font-size: 0.7rem; }
 
   /* CONFIRM BAR */
   .confirm-bar {
@@ -360,6 +409,7 @@
       </div>
       <div class="action-bar">
         <button class="btn btn-add" onclick="addPlayer('custom')">+ Joueur</button>
+        <button class="btn btn-history-global" onclick="openGlobalHistory('custom')">📋 Historique</button>
         <button class="btn btn-reset" onclick="resetScores('custom')">↺ Remise à zéro</button>
       </div>
       <div class="confirm-bar" id="confirm-custom">
@@ -384,6 +434,7 @@
       </div>
       <div class="action-bar">
         <button class="btn btn-add" onclick="addPlayer('flip7')">+ Joueur</button>
+        <button class="btn btn-history-global" onclick="openGlobalHistory('flip7')">📋 Historique</button>
         <button class="btn btn-reset" onclick="resetScores('flip7')">↺ Remise à zéro</button>
       </div>
       <div class="confirm-bar" id="confirm-flip7">
@@ -408,6 +459,7 @@
       </div>
       <div class="action-bar">
         <button class="btn btn-add" onclick="addPlayer('skyjo')">+ Joueur</button>
+        <button class="btn btn-history-global" onclick="openGlobalHistory('skyjo')">📋 Historique</button>
         <button class="btn btn-reset" onclick="resetScores('skyjo')">↺ Remise à zéro</button>
       </div>
       <div class="confirm-bar" id="confirm-skyjo">
@@ -432,6 +484,7 @@
       </div>
       <div class="action-bar">
         <button class="btn btn-add" onclick="addPlayer('dekal')">+ Joueur</button>
+        <button class="btn btn-history-global" onclick="openGlobalHistory('dekal')">📋 Historique</button>
         <button class="btn btn-reset" onclick="resetScores('dekal')">↺ Remise à zéro</button>
       </div>
       <div class="confirm-bar" id="confirm-dekal">
@@ -456,6 +509,7 @@
       </div>
       <div class="action-bar">
         <button class="btn btn-add" onclick="addPlayer('hexa')">+ Joueur</button>
+        <button class="btn btn-history-global" onclick="openGlobalHistory('hexa')">📋 Historique</button>
         <button class="btn btn-reset" onclick="resetScores('hexa')">↺ Remise à zéro</button>
       </div>
       <div class="confirm-bar" id="confirm-hexa">
@@ -497,7 +551,18 @@
 
 </div>
 
-<!-- HISTORY MODAL -->
+<!-- GLOBAL HISTORY MODAL -->
+<div class="gh-overlay" id="gh-overlay" onclick="closeGH(event)">
+  <div class="gh-modal">
+    <div class="gh-header">
+      <h3 id="gh-title">📋 Historique</h3>
+      <button class="gh-close" onclick="closeGHBtn()">✕</button>
+    </div>
+    <div class="gh-table-wrap" id="gh-table-wrap">
+      <div class="gh-empty" id="gh-empty" style="display:none">Aucun tour enregistré</div>
+    </div>
+  </div>
+</div>
 <div class="history-overlay" id="history-overlay" onclick="closeHistory(event)">
   <div class="history-modal">
     <div class="history-header">
@@ -531,21 +596,27 @@ Object.keys(GAME_CONFIG).forEach(id => { games[id] = []; });
 let hexaSelectedIdx = null;
 
 // ── SAUVEGARDE ──
-function saveGame(id) {
-  try { localStorage.setItem('scoregames_' + id, JSON.stringify(games[id])); } catch(e) {}
-}
 function loadGame(id) {
   try {
     const saved = localStorage.getItem('scoregames_' + id);
-    if (saved) { games[id] = JSON.parse(saved); return true; }
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (Array.isArray(data)) { games[id] = data; games[id].log = []; }
+      else { games[id] = data.players || data; games[id].log = data.log || []; }
+      return true;
+    }
   } catch(e) {}
   return false;
+}
+function saveGame(id) {
+  try { localStorage.setItem('scoregames_' + id, JSON.stringify({ players: games[id], log: games[id].log || [] })); } catch(e) {}
 }
 
 function initGame(id) {
   if (!loadGame(id)) {
     games[id] = NAMES.map((n, i) => ({ name: n, color: COLORS[i], score: 0, history: [] }));
   }
+  if (!games[id].log) games[id].log = [];
   renderGame(id);
 }
 Object.keys(GAME_CONFIG).forEach(initGame);
@@ -631,11 +702,15 @@ function adjustScore(id, idx, sign) {
   const pts = Math.abs(parseInt(inputEl.value) || 0);
   if (pts === 0) return;
 
-  // Applique le joueur cliqué
+  // Collecte tous les joueurs concernés
+  const entries = [];
+
+  // Joueur cliqué
   games[id][idx].score += sign * pts;
   games[id][idx].history.push({ pts: sign * pts, total: games[id][idx].score });
+  entries.push({ playerIdx: idx, pts: sign * pts });
 
-  // Applique aussi les autres joueurs qui ont un champ renseigné
+  // Autres joueurs avec un champ renseigné
   games[id].forEach((p, i) => {
     if (i === idx) return;
     const otherEl = document.getElementById('input-' + id + '-' + i);
@@ -644,6 +719,23 @@ function adjustScore(id, idx, sign) {
     if (otherPts === 0) return;
     p.score += otherPts;
     p.history.push({ pts: otherPts, total: p.score });
+    entries.push({ playerIdx: i, pts: otherPts });
+  });
+
+  // Log : tour si plusieurs joueurs, correctif si un seul
+  if (!games[id].log) games[id].log = [];
+  const isTour = entries.length > 1;
+  const tourNum = games[id].log.filter(e => e.type === 'tour').length + (isTour ? 1 : 0);
+  games[id].log.push({
+    type: isTour ? 'tour' : 'correctif',
+    num: isTour ? tourNum : null,
+    entries: entries.map(e => ({
+      playerIdx: e.playerIdx,
+      name: games[id][e.playerIdx].name,
+      color: games[id][e.playerIdx].color,
+      pts: e.pts,
+    })),
+    timestamp: Date.now(),
   });
 
   const disp = document.getElementById('score-disp-' + id + '-' + idx);
@@ -678,11 +770,112 @@ function confirmReset(id, yes) {
   document.getElementById('confirm-' + id).style.display = 'none';
   if (yes) {
     games[id].forEach(p => { p.score = 0; p.history = []; });
+    games[id].log = [];
     if (id === 'hexa') { hexaSelectedIdx = null; document.getElementById('hexa-pts-section')?.classList.remove('ready'); }
     saveGame(id);
     renderGame(id);
   }
 }
+
+// ── GLOBAL HISTORY ──
+function openGlobalHistory(id) {
+  const log     = games[id].log || [];
+  const players = games[id];
+  document.getElementById('gh-title').textContent = '📋 Historique — ' + GAME_NAMES[id];
+  const wrap = document.getElementById('gh-table-wrap');
+  wrap.innerHTML = '';
+
+  if (!log.length) {
+    wrap.innerHTML = '<div class="gh-empty">Aucun tour enregistré</div>';
+    document.getElementById('gh-overlay').classList.add('open');
+    return;
+  }
+
+  // Build table
+  const table = document.createElement('table');
+  table.className = 'gh-table';
+
+  // Header row: Type | Player1 | Player2 | ...
+  const thead = document.createElement('thead');
+  const hrow  = document.createElement('tr');
+  const thType = document.createElement('th');
+  thType.className = 'col-type';
+  thType.textContent = 'Tour';
+  hrow.appendChild(thType);
+  players.forEach(p => {
+    const th = document.createElement('th');
+    const initials = (p.name || 'Joueur').substring(0, 3).toUpperCase();
+    th.innerHTML = '<span style="color:' + p.color + ';font-family:\'Bebas Neue\',sans-serif;font-size:0.85rem;letter-spacing:0.05em">' + initials + '</span>';
+    hrow.appendChild(th);
+  });
+  thead.appendChild(hrow);
+  table.appendChild(thead);
+
+  // Body rows
+  const tbody = document.createElement('tbody');
+  let tourNum = 0;
+  log.forEach(entry => {
+    if (entry.type === 'tour') tourNum++;
+    const row = document.createElement('tr');
+
+    // Type cell
+    const tdType = document.createElement('td');
+    tdType.className = 'col-type';
+    if (entry.type === 'tour') {
+      tdType.innerHTML = '<span class="gh-badge-tour">T' + tourNum + '</span>';
+    } else {
+      tdType.innerHTML = '<span class="gh-badge-correctif">Cor.</span>';
+    }
+    row.appendChild(tdType);
+
+    // One cell per player
+    players.forEach((p, i) => {
+      const td  = document.createElement('td');
+      const ent = entry.entries.find(e => e.playerIdx === i);
+      if (ent) {
+        const sign  = ent.pts >= 0 ? '+' : '';
+        const cls   = ent.pts > 0 ? 'gh-pts-pos' : 'gh-pts-neg';
+        td.innerHTML = '<span class="' + cls + '">' + sign + ent.pts + '</span>';
+      } else {
+        td.innerHTML = '<span class="gh-pts-nil">—</span>';
+      }
+      row.appendChild(td);
+    });
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+
+  // Total row
+  const tfoot = document.createElement('tfoot');
+  const trow  = document.createElement('tr');
+  const tdTotalLabel = document.createElement('td');
+  tdTotalLabel.className = 'col-type';
+  tdTotalLabel.innerHTML = '<span style="color:var(--text);font-weight:700">Total</span>';
+  trow.appendChild(tdTotalLabel);
+
+  // Calcul des rangs pour les couleurs
+  const cfg = GAME_CONFIG[id];
+  const sorted = [...players].map((p, i) => ({ score: p.score, idx: i }))
+    .sort((a, b) => cfg.highWins ? b.score - a.score : a.score - b.score);
+  const medalColors = ['#c9a000', '#909090', '#a0622a'];
+
+  players.forEach((p, i) => {
+    const rank = sorted.findIndex(s => s.idx === i);
+    const color = rank < 3 && p.score !== 0 ? medalColors[rank] : '#fff';
+    const sign = p.score > 0 ? '+' : '';
+    const td = document.createElement('td');
+    td.innerHTML = '<span style="font-weight:700;color:' + color + '">' + sign + p.score + '</span>';
+    td.style.borderTop = '2px solid var(--border)';
+    trow.appendChild(td);
+  });
+  tfoot.appendChild(trow);
+  table.appendChild(tfoot);
+
+  wrap.appendChild(table);
+  document.getElementById('gh-overlay').classList.add('open');
+}
+function closeGHBtn() { document.getElementById('gh-overlay').classList.remove('open'); }
+function closeGH(e)   { if (e.target === document.getElementById('gh-overlay')) closeGHBtn(); }
 
 // ── HEXA ──
 function renderHexaTargets() {
