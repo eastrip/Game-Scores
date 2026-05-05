@@ -265,8 +265,6 @@
   .player-card.leader .card-top { background: linear-gradient(135deg, #000 0%, #c9a000 100%); }
   .player-card.rank-2 .card-top { background: linear-gradient(135deg, #000 0%, #909090 100%); }
   .player-card.rank-3 .card-top { background: linear-gradient(135deg, #000 0%, #a0622a 100%); }
-  .leader-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 4px var(--accent); display: none; flex-shrink: 0; }
-  .player-card.leader .leader-dot { display: block; }
   .color-picker-wrap {
     position: relative; width: 20px; height: 20px; border-radius: 50%;
     cursor: pointer; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15);
@@ -621,7 +619,7 @@ const GAME_CONFIG = {
   uno:    { limit: 500,  highWins: false, minPlayers: 2, maxPlayers: 10 },
 };
 const GAME_NAMES = { custom:'Personnalisé', flip7:'Flip 7', skyjo:'Skyjo', dekal:'Dékal', hexa:'Hexa', uno:'Uno' };
-const COLORS = ['#f0c040','#e05050','#50b8e0','#70d4a0','#d88ae0','#f09640'];
+const COLORS = ['#f0c040','#e05050','#50b8e0','#70d4a0','#d88ae0','#f09640','#a0d8ef','#ff9eb5','#b5ead7','#ffdac1'];
 const NAMES  = ['Joueur 1','Joueur 2','Joueur 3','Joueur 4'];
 
 const games = {};
@@ -681,7 +679,7 @@ function renderGame(id) {
   const players = games[id];
   const sorted  = [...players].sort((a, b) => cfg.highWins ? b.score - a.score : a.score - b.score);
   const leaderScore = sorted[0]?.score;
-  const gameOver    = players.some(p => p.score > limit);
+  const gameOver    = players.some(p => Math.abs(p.score) >= limit);
 
   const banner   = document.getElementById('winner-' + id);
   const winnerEl = document.getElementById('wname-' + id);
@@ -718,7 +716,6 @@ function renderGame(id) {
           '<div class="rank-badge">' + rankLabel + '</div>' +
           '<div class="score-display" id="score-disp-' + id + '-' + idx + '" style="color:' + p.color + '">' + p.score + '</div>' +
         '</div>' +
-        (isLeader ? '' : '') +
       '</div>' +
       '<div class="card-controls">' +
         '<button class="btn-score btn-minus" onclick="adjustScore(\'' + id + '\',' + idx + ',-1)">−</button>' +
@@ -939,6 +936,14 @@ function hookHexaBtns() {
       const pts = parseInt(btn.dataset.pts);
       games['hexa'][hexaSelectedIdx].score += pts;
       games['hexa'][hexaSelectedIdx].history.push({ pts, total: games['hexa'][hexaSelectedIdx].score });
+      // Log comme correctif (un seul joueur)
+      if (!games['hexa'].log) games['hexa'].log = [];
+      games['hexa'].log.push({
+        type: 'correctif',
+        num: null,
+        entries: [{ playerIdx: hexaSelectedIdx, name: games['hexa'][hexaSelectedIdx].name, color: games['hexa'][hexaSelectedIdx].color, pts }],
+        timestamp: Date.now(),
+      });
       const disp = document.getElementById('score-disp-hexa-' + hexaSelectedIdx);
       if (disp) { disp.classList.remove('bump'); void disp.offsetWidth; disp.classList.add('bump'); }
       saveGame('hexa');
