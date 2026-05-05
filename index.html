@@ -127,6 +127,7 @@
   .gc-skyjo  { background: linear-gradient(135deg, #1ab8d4 0%, #0a8a30 100%); }
   .gc-dekal  { background: linear-gradient(135deg, #1a0202 0%, #8b1a1a 100%); }
   .gc-hexa   { background: linear-gradient(135deg, #3a9e7a 0%, #e05080 100%); }
+  .gc-uno    { background: linear-gradient(135deg, #0a0a0a 0%, #cc0000 100%); }
 
   /* ══ GAME SCREEN ══ */
   .game-screen { display: none; }
@@ -142,6 +143,7 @@
   .theme-skyjo  { background: linear-gradient(180deg, #1ab8d4 0%, #0a8a30 100%); }
   .theme-dekal  { background: linear-gradient(180deg, #2a0505 0%, #7a1010 100%); }
   .theme-hexa   { background: linear-gradient(160deg, #3a9e7a 0%, #a0c040 25%, #e8a020 60%, #e05080 100%); }
+  .theme-uno    { background: linear-gradient(180deg, #0a0a0a 0%, #cc0000 100%); }
 
   /* GAME META */
   .game-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -373,6 +375,12 @@
         <div class="game-card-title">Personnalisé</div>
         <div class="game-card-sub">Limite réglable</div>
       </div>
+      <div class="game-card gc-dekal" onclick="openGame('dekal')">
+        <div class="game-card-badge">🎯 - de pts gagne</div>
+        <div class="game-card-title">Dékal</div>
+        <div class="game-card-sub">Limite 100 pts</div>
+        <div class="game-card-sub">2-6 joueurs</div>
+      </div>
       <div class="game-card gc-flip7" onclick="openGame('flip7')">
         <div class="game-card-badge">🏆 + de pts gagne</div>
         <div class="game-card-title">Flip 7</div>
@@ -385,11 +393,11 @@
         <div class="game-card-sub">Limite 100 pts</div>
         <div class="game-card-sub">2-8 joueurs</div>
       </div>
-      <div class="game-card gc-dekal" onclick="openGame('dekal')">
+      <div class="game-card gc-uno" onclick="openGame('uno')">
         <div class="game-card-badge">🎯 - de pts gagne</div>
-        <div class="game-card-title">Dékal</div>
-        <div class="game-card-sub">Limite 100 pts</div>
-        <div class="game-card-sub">2-6 joueurs</div>
+        <div class="game-card-title">Uno</div>
+        <div class="game-card-sub">Limite 500 pts</div>
+        <div class="game-card-sub">2-10 joueurs</div>
       </div>
       <div class="game-card gc-hexa" onclick="openGame('hexa')">
         <div class="game-card-badge">🏆 + de pts gagne</div>
@@ -549,6 +557,31 @@
     </div>
   </div>
 
+  <!-- ══ UNO ══ -->
+  <div class="game-screen" id="screen-uno">
+    <div class="game-panel theme-uno">
+      <div class="game-meta">
+        <span class="game-info-badge">🃏 Limite : 500 pts</span>
+        <span class="game-info-badge">🎯 Le moins de points gagne</span>
+      </div>
+      <div class="action-bar">
+        <button class="btn btn-add" onclick="addPlayer('uno')">+ Joueur</button>
+        <button class="btn btn-history-global" onclick="openGlobalHistory('uno')">📋 Historique</button>
+        <button class="btn btn-reset" onclick="resetScores('uno')">↺ Remise à zéro</button>
+      </div>
+      <div class="confirm-bar" id="confirm-uno">
+        <span>Remettre tous les scores à zéro ?</span>
+        <button class="btn-confirm-no" onclick="confirmReset('uno',false)">Annuler</button>
+        <button class="btn-confirm-yes" onclick="confirmReset('uno',true)">Confirmer</button>
+      </div>
+      <div class="winner-banner" id="winner-uno">
+        <span class="trophy">🏆</span>
+        <div><div class="winner-text">Partie terminée ! Vainqueur :</div><div class="winner-name" id="wname-uno"></div></div>
+      </div>
+      <div class="players-grid" id="grid-uno"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- GLOBAL HISTORY MODAL -->
@@ -585,8 +618,9 @@ const GAME_CONFIG = {
   skyjo:  { limit: 100,  highWins: false, minPlayers: 2, maxPlayers: 8  },
   dekal:  { limit: 100,  highWins: false, minPlayers: 2, maxPlayers: 6  },
   hexa:   { limit: 100,  highWins: true,  minPlayers: 2, maxPlayers: 6  },
+  uno:    { limit: 500,  highWins: false, minPlayers: 2, maxPlayers: 10 },
 };
-const GAME_NAMES = { custom:'Personnalisé', flip7:'Flip 7', skyjo:'Skyjo', dekal:'Dékal', hexa:'Hexa' };
+const GAME_NAMES = { custom:'Personnalisé', flip7:'Flip 7', skyjo:'Skyjo', dekal:'Dékal', hexa:'Hexa', uno:'Uno' };
 const COLORS = ['#f0c040','#e05050','#50b8e0','#70d4a0','#d88ae0','#f09640'];
 const NAMES  = ['Joueur 1','Joueur 2','Joueur 3','Joueur 4'];
 
