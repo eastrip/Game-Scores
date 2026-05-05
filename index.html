@@ -372,6 +372,7 @@
         <div class="game-card-badge">🏆 + de pts gagne</div>
         <div class="game-card-title">Personnalisé</div>
         <div class="game-card-sub">Limite réglable</div>
+        <div class="game-card-sub">2-10 joueurs</div>
       </div>
       <div class="game-card gc-dekal" onclick="openGame('dekal')">
         <div class="game-card-badge">🎯 - de pts gagne</div>
@@ -397,7 +398,7 @@
         <div class="game-card-sub">Limite 500 pts</div>
         <div class="game-card-sub">2-10 joueurs</div>
       </div>
-      <div class="game-card gc-hexa" onclick="openGame('hexa')">
+      <div class="game-card gc-hexa" onclick="openGame('hexa')" style="opacity:0.15">
         <div class="game-card-badge">🏆 + de pts gagne</div>
         <div class="game-card-title">Hexa</div>
         <div class="game-card-sub">Limite 100 pts</div>
@@ -611,7 +612,7 @@
 
 <script>
 const GAME_CONFIG = {
-  custom: { limit: null, highWins: true,  minPlayers: 2, maxPlayers: 99 },
+  custom: { limit: null, highWins: true,  minPlayers: 2, maxPlayers: 10 },
   flip7:  { limit: 200,  highWins: true,  minPlayers: 3, maxPlayers: 99 },
   skyjo:  { limit: 100,  highWins: false, minPlayers: 2, maxPlayers: 8  },
   dekal:  { limit: 100,  highWins: false, minPlayers: 2, maxPlayers: 6  },
